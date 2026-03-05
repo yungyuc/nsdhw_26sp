@@ -30,7 +30,6 @@ Presentation
 ============
 
 ..
-
   The presentation schedule is set.  If you want to change the time, ask the
   presenter at the other time slot, and file a PR tagging him or her and the
   instructor (@yungyuc) against the branch `master`.  Everyone involved needs to
