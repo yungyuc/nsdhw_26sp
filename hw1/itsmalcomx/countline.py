@@ -2,7 +2,7 @@
 ''':'
 if [ -n "$PYTHON_BIN" ]; then
     if ! command -v "$PYTHON_BIN" &>/dev/null; then
-        echo "Error: '$PYTHON_BIN' not found" >&2
+        echo "exec: $PYTHON_BIN: not found" >&2
         exit 1
     fi
     exec "$PYTHON_BIN" "$0" "$@"
