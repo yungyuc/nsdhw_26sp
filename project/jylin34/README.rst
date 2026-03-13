@@ -84,7 +84,8 @@ maintaining user-defined flexibility in Python.
    NumPy, allowing both layers to operate on the same raw data without 
    expensive serialization.
 
-3. **C++ High-Performance Engine**: 
+3. **C++ High-Performance Engine**:
+
    * **Data Representation**: Stores the population in a **strictly 
      contiguous 1D array** (Row-major layout) to ensure spatial locality.
    * **Parallelized Operators**: Crossover and mutation are parallelized 
@@ -168,16 +169,30 @@ Engineering Infrastructure
 Schedule
 ========
 
-The development is planned as an 8-week project (2026/03/09 - 2026/05/03):
-
-* **Week 1 (03/09)**: Setup CMake/pybind11 environment and 1D buffer logic.
-* **Week 2 (03/16)**: Implement basic C++ crossover and mutation operators.
-* **Week 3 (03/23)**: Build the Batch Evaluation bridge for Python callbacks.
-* **Week 4 (03/30)**: Integrate **OpenMP** for parallelizing operators.
-* **Week 5 (04/06)**: Implement GIL management and optimize memory access.
-* **Week 6 (04/13)**: Conduct performance benchmarking against PyGAD.
-* **Week 7 (04/20)**: Finalize Python API and bug fixes.
-* **Week 8 (04/27)**: Complete documentation and prepare final presentation.
+* **Week 1 (03/16 to 03/22)**: Project Infrastructure. Implement the CMake 
+  build system and initial ``pybind11`` bindings. Define the C++ 
+  ``Population`` class and expose its memory to Python via Buffer Protocol.
+* **Week 2 (03/23 to 03/29)**: Core C++ Operators. Develop the initial single-
+  threaded kernels for crossover and mutation. Ensure these operators 
+  interact correctly with the raw double-precision memory buffers.
+* **Week 3 (03/30 to 04/05)**: Integration and Testing. Implement the 
+  **Batch Evaluation** bridge. Write ``pytest`` scripts to verify that 
+  user-defined Python functions can correctly process the C++ memory views.
+* **Week 4 (04/06 to 04/12)**: Evolutionary Loop. Implement the selection 
+  logic and orchestrate the main GA cycle in C++. Verify end-to-end 
+  functionality (Initialization -> Evaluation -> Reproduction) from Python.
+* **Week 5 (04/13 to 04/19)**: Concurrency & OpenMP. Integrate **OpenMP** 
+  into the reproduction kernels. Implement GIL management (releasing GIL 
+  during C++ phases) to enable stable multi-core execution of GA operators.
+* **Week 6 (04/20 to 04/26)**: Numerical Application. Implement the 
+  **Rosenbrock function** and other benchmarks in Python. Verify the engine's 
+  convergence and stability under parallel execution modes.
+* **Week 7 (04/27 to 05/03)**: Robustness & Refinement. Conduct tests with 
+  large-scale populations and high-dimensional vectors. Refine the Python 
+  API and internal memory management based on profiling results.
+* **Week 8 (05/04 to 05/10)**: Documentation and Final Benchmarking. Perform 
+  comparative experiments against PyGAD. Finalize the Prepare the presentation
+  and demo materials.
 
 References
 ==========
