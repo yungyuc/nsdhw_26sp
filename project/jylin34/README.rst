@@ -5,8 +5,16 @@ Proposal: FastGA - A High-Performance Hybrid Genetic Algorithm Engine
 Basic Information
 =================
 
-**Repository:**
+**Repository:** https://github.com/jylin34/FastGA
 
+FastGA is a high-performance C++ genetic algorithm (GA) library with 
+Python bindings, specifically optimized for global optimization problems 
+represented by **1D double-precision vectors**. 
+
+The project bridges the gap between Python's development flexibility and 
+C++'s raw execution speed. It allows users to define complex, vectorized 
+fitness functions in Python while offloading the memory-intensive 
+evolutionary loops and genetic operators to a multi-threaded C++ engine.
 
 Problem to Solve
 ================
@@ -61,107 +69,122 @@ of Python and the computational performance of C++. The potential user includes:
 System Architecture
 ===================
 
-FastGA implements a three-layered hybrid architecture to decouple high-level 
-modeling from low-level computational execution, ensuring zero-copy data flow.
+FastGA adopts a three-tier hybrid architecture to maximize throughput while 
+maintaining user-defined flexibility in Python.
 
+1. **Python Control Layer**: 
+   Users define the optimization problem and the fitness logic. To optimize 
+   performance, the system requires a **Vectorized Fitness Function**. The 
+   engine passes the entire 1D vector population to Python as a single 2D 
+   NumPy array once per generation.
 
-1. **Python API Layer (User Interface)**:
-   Provides a high-level interface for evolution control. It supports **Batch 
-   Evaluation**, where the entire population is passed to the Python-defined 
-   fitness function as a single NumPy array, reducing the cross-language 
-   callback overhead from $O(N)$ to $O(1)$ per generation.
+2. **Interoperability Layer (pybind11)**: 
+   Uses the NumPy Buffer Protocol to achieve **Zero-copy** data sharing. The 
+   C++ engine shares its internal memory address directly with Python's 
+   NumPy, allowing both layers to operate on the same raw data without 
+   expensive serialization.
 
-2. **Interoperability Layer (pybind11)**:
-   Acts as a transparent bridge utilizing the **NumPy Buffer Protocol**. It 
-   maps C++ memory buffers directly to NumPy ndarrays, enabling **Zero-copy** 
-   data sharing. This allows the C++ engine and Python scripts to operate on 
-   the same memory address.
+3. **C++ High-Performance Engine**: 
+   * **Data Representation**: Stores the population in a **strictly 
+     contiguous 1D array** (Row-major layout) to ensure spatial locality.
+   * **Parallelized Operators**: Crossover and mutation are parallelized 
+     using **OpenMP**, allowing simultaneous modification of individuals 
+     across all available CPU cores.
+   * **GIL Management**: The engine explicitly **releases the GIL** during 
+     C++ reproduction phases, ensuring that the computational core does not 
+     block the Python interpreter.
 
-3. **C++ Core Engine (Performance Core)**:
-   * **Data Representation**: Stores the population in a **strictly contiguous 
-     1D array** of doubles (Row-major). This layout maximizes spatial locality 
-     for CPU cache prefetching.
-   * **Parallelism**: Genetic operators are optimized with **SIMD** instructions. 
-     During fitness evaluation, the engine **releases the GIL** and utilizes 
-     **OpenMP** for true multi-core parallel execution.
-
-Workflow and Data Flow:
------------------------
-
-.. code-block:: text
-
-   [ Python ] -> User defines Fitness(NumPy_Matrix)
-      |
-   [ pybind11 ] -> Zero-copy mapping (NumPy <-> double*)
-      |
-   [ C++ Core ] -> 1. Crossover/Mutation (SIMD Optimized)
-                -> 2. Release GIL & OpenMP Parallel Evaluation
-                -> 3. Selection & Memory Management
-
-Key C++ Components:
--------------------
-
-.. code-block:: cpp
-
-   class Population {
-   public:
-       // Contiguous buffer: size = pop_size * genome_size
-       std::vector<double> m_data;
-       double* data_ptr() { return m_data.data(); }
-   };
-
-   class GAEngine {
-   public:
-       // Main loop with OpenMP and GIL release
-       void run_evolution(Population& pop, int generations);
-       // Interface for vectorized Python callbacks
-       void set_batch_fitness(py::function func);
-   };
+Workflow:
+---------
+1. Initialize a contiguous ``std::vector<double>`` buffer in C++.
+2. **Reproduction Phase**: C++ uses OpenMP to perform mutation/crossover 
+   on all 1D vectors in parallel.
+3. **Evaluation Phase**: C++ maps the buffer to a NumPy array and makes a 
+   **single call** to the Python fitness function.
+4. **Selection Phase**: C++ performs survival selection based on the 
+   returned scores and prepares the next generation.
 
 API Description
 ===============
 
-A user interacts with FastGA by defining a **Vectorized Fitness Function**. 
-The function receives the entire population as a NumPy array, allowing the 
-user to use optimized NumPy expressions.
+FastGA allows users to define both the chromosome dimension and the 
+optimization goal in Python.
 
-**Example Script:**
+Example: Solving the Rosenbrock Function
+----------------------------------------
+
+The Rosenbrock function is a non-convex function where the global minimum 
+is inside a long, narrow, parabolic-shaped flat valley. 
+
+$$f(x) = \sum_{i=1}^{n-1} [100(x_{i+1} - x_i^2)^2 + (1 - x_i)^2]$$
 
 .. code-block:: python
 
    import fastga
    import numpy as np
 
-   # User defines the logic in Python
-   def objective_function(population):
-       # population is a 2D NumPy view of the internal C++ buffer
-       # Optimized vectorized calculation: f(x) = sum(x^2)
-       return -np.sum(population**2, axis=1)
+   # 1. Define a Vectorized Fitness Function
+   # 'population' is a NumPy view of the C++ memory (shape: N x Dim)
+   def rosenbrock_fitness(population):
+       x = population[:, :-1]
+       x_next = population[:, 1:]
+       # High-speed vectorized calculation using NumPy
+       scores = np.sum(100.0*(x_next - x**2.0)**2.0 + (1.0 - x)**2.0, axis=1)
+       return -scores  # Negative because GA maximizes fitness
 
-   # 1. Setup Population (100 individuals, each with 50 variables)
-   pop = fastga.Population(pop_size=100, genome_size=50)
+   # 2. Setup: 1000 individuals, each a 50-dimensional 1D vector
+   pop = fastga.Population(pop_size=1000, genome_size=50)
 
-   # 2. Setup C++ Engine
-   engine = fastga.GAEngine(mut_rate=0.01, cross_rate=0.8)
-   engine.set_batch_fitness(objective_function)
+   # 3. Configure Engine
+   engine = fastga.GAEngine(mutation_rate=0.02, crossover_rate=0.8)
+   engine.set_batch_fitness(rosenbrock_fitness)
 
-   # 3. Execute High-performance Evolution
-   engine.evolve(pop, generations=1000)
+   # 4. Evolve
+   engine.evolve(pop, generations=2000)
 
-   # 4. Result Retrieval (Zero-copy)
-   best_result = pop.get_best()
+   # 5. Result
+   print(f"Best Solution found: {pop.get_best()}")
 
+Core Interface:
+---------------
+
+* ``fastga.Population(size, dim)``: Allocates contiguous memory for ``size`` 
+  individuals with ``dim`` variables (1D vector size).
+* ``GAEngine.set_batch_fitness(func)``: Registers the Python callback for 
+  vectorized evaluation.
+* ``GAEngine.evolve(pop, gens)``: Triggers the C++ loop, OpenMP threads, 
+  and GIL management.
 
 Engineering Infrastructure
 ==========================
 
-
+* **Automatic Build System**: FastGA uses **CMake** for C++ compilation 
+  and **pybind11** for Python wrapping. 
+* **Version Control**: Managed via **Git/GitHub** following a feature-branch 
+  and Pull Request workflow.
+* **Testing Framework**: **pytest** is used to verify API correctness, 
+  zero-copy integrity, and convergence on numerical benchmarks.
 
 Schedule
 ========
 
+The development is planned as an 8-week project (2026/03/09 - 2026/05/03):
 
+* **Week 1 (03/09)**: Setup CMake/pybind11 environment and 1D buffer logic.
+* **Week 2 (03/16)**: Implement basic C++ crossover and mutation operators.
+* **Week 3 (03/23)**: Build the Batch Evaluation bridge for Python callbacks.
+* **Week 4 (03/30)**: Integrate **OpenMP** for parallelizing operators.
+* **Week 5 (04/06)**: Implement GIL management and optimize memory access.
+* **Week 6 (04/13)**: Conduct performance benchmarking against PyGAD.
+* **Week 7 (04/20)**: Finalize Python API and bug fixes.
+* **Week 8 (04/27)**: Complete documentation and prepare final presentation.
 
 References
 ==========
 
+1. **Course Repository**: yungyuc/nsd (https://github.com/yungyuc/nsd)
+2. **pybind11 Documentation**: https://pybind11.readthedocs.io/
+3. **PyGAD Library**: Ahmed Gad, GeneticAlgorithmPython (https://github.com/ahmedfgad/GeneticAlgorithmPython)
+4. **NumPy Buffer Protocol**: https://numpy.org/doc/stable/reference/arrays.interface.html
+5. **Rosenbrock Function**: Rosenbrock, H. H. (1960). An automatic method for finding the greatest or least value of a function. The Computer Journal.
+6. **OpenMP Specification**: https://www.openmp.org/
