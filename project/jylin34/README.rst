@@ -147,6 +147,9 @@ $$f(x) = \sum_{i=1}^{n-1} [100(x_{i+1} - x_i^2)^2 + (1 - x_i)^2]$$
    # 5. Result
    print(f"Best Solution found: {pop.get_best()}")
 
+   # In this case, traditional approach will use up to 2000 * 1000 for loops,
+   # means that fitness function will be called 2000000 times.
+
 Core Interface:
 ---------------
 
