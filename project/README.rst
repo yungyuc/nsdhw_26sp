@@ -52,6 +52,9 @@ Follow the format to add your project:
 0. `github_account_name <https://github.com/github_account_name>`__ for
    `Project subject (this is an example entry) <github_account_name/README.rst>`__:
    https://github.com/github_account_name/project_name
+1. `qqsc12 <https://github.com/qqsc12>`__ for
+   `Semi-columnar-array for Semiconductor Data <qqsc12/README.rst>`__:
+   https://github.com/qqsc12/semi-columnar-array
 
 .. note::
 
