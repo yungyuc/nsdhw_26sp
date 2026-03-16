@@ -14,9 +14,11 @@ mechanics for battle-royale-style environments.
 Problem to Solve
 ================
 
-This project aims to simulate a 2D physical environment where multiple entities
-(represented as dots) interact under the constraints of classical mechanics and
-a dynamically shrinking boundary. The core physics problems solved include:
+This project aims to build a high-performance 3D particle simulation engine
+capable of handling massive scales (:math:`N = 10^5` to :math:`10^6` spheres).
+Moving from 2D to 3D makes the simulation much more complex. At this scale,
+checking every single pair of particles for collisions is simply too slow for
+any computer to handle.
 
 1. **Newton's Laws of Motion & Friction**:
 
@@ -36,6 +38,22 @@ a dynamically shrinking boundary. The core physics problems solved include:
 3. **Boundary Constraints**: The 2D plane constantly shrinks over time. If a
    dot's coordinates fall outside the current boundary radius, it is eliminated
    ("dead").
+
+4. **3D Spatial Partitioning**: Implementing and benchmarking advanced 3D
+   spatial data structures (e.g., 3D Uniform Grid vs. Octree vs. KD-Tree)
+   for broad-phase collision detection to reduce time complexity.
+
+5. **Memory Architecture & Cache Locality**: Shifting from traditional Object-
+   Oriented Programming (AoS) to Data-Oriented Design (SoA) to maximize CPU
+   cache hit rates and SIMD vectorization during intensive 3D state updates.
+
+6. **Parallelism & Profiling**: Utilizing OpenMP for multi-threading. Rigorous
+   performance profiling (using tools like Nsight or perf) will be conducted
+   to identify and resolve bottlenecks in 3D vector mathematics.
+
+7. **Memory Sharing**: Efficiently sharing massive 3D coordinate buffers with
+   Python via ``pybind11`` without copying overhead, allowing for advanced 3D
+   visualization using tools.
 
 Prospective Users
 =================
@@ -98,8 +116,8 @@ The system will be implemented in C++ for performance, with a Python wrapper.
     sim = dotarena.Simulation(plane=arena)
 
     # Create and add dots
-    dot1 = dotarena.Dot(id=1, mass=10.0, radius=5.0, pos=(0.0, 0.0),
-                        vel=(50.0, 20.0))
+    dot1 = dotarena.Sphere(id=1, mass=10.0, radius=5.0, pos=(0.0, 0.0, 0.0),
+                           vel=(50.0, 20.0, -10.0))
     sim.add_dot(dot1)
 
     # Advance simulation and extract state
