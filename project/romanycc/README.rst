@@ -7,7 +7,7 @@ Basic Information
 
 **Repository:** https://github.com/romanycc/DotArena
 
-DotArena is a lightweight 2D physics simulation engine built in C++ with Python
+DotArena is a lightweight 3D physics simulation engine built in C++ with Python
 bindings, focusing on elastic collisions, friction, and dynamic boundary
 mechanics for battle-royale-style environments.
 
@@ -24,18 +24,18 @@ any computer to handle.
 
    * *First Law (Inertia)*: The dots maintain their velocity and direction until
      acted upon by an external force (friction or collision).
-   * *Second Law (F=ma)*: The 2D plane applies a constant friction force,
+   * *Second Law (F=ma)*: The 3D space applies a constant friction force,
      causing the moving dots to decelerate over time.
    * *Third Law (Action and Reaction)*: When two dots collide, they exert equal
      and opposite forces on each other.
 
-2. **The Collision Mechanism**: Implementing 2D elastic collisions. The system
+2. **The Collision Mechanism**: Implementing 3D elastic collisions. The system
    must accurately calculate the exchange of kinetic energy and the new
    directional vectors for both dots based on the conservation of momentum
    (:math:`m_1v_1 + m_2v_2 = m_1v_1' + m_2v_2'`), taking their respective masses
    and velocities into account.
 
-3. **Boundary Constraints**: The 2D plane constantly shrinks over time. If a
+3. **Boundary Constraints**: The 3D space constantly shrinks over time. If a
    dot's coordinates fall outside the current boundary radius, it is eliminated
    ("dead").
 
@@ -66,14 +66,14 @@ mechanics. The prospective users include:
    collision detection and boundary logic for top-down games.
 2. **Physics Students & Educators**: Users who want to visualize momentum,
    Newton's laws, and energy transfer in an interactive script.
-3. **AI/ML Researchers**: Users looking for a lightweight, customizable 2D
+3. **AI/ML Researchers**: Users looking for a lightweight, customizable 3D
    environment to train reinforcement learning agents.
 
 System Architecture
 ===================
 
 To simplify the problem, the system transforms the scenario into multiple dots
-with specific masses and radii on a 2D plane.
+with specific masses and radii on a 3D space.
 
 **Workflow**:
 
@@ -141,7 +141,7 @@ Schedule
   and basic C++ class definitions (``Dot``, ``Plane``, ``Simulation``).
 * **Week 2 (03/14 to 03/20)**: Implement the core kinematics math in C++:
   Newton's laws, position updates, and the friction deceleration logic.
-* **Week 3 (03/21 to 03/27)**: Implement the 2D collision detection and
+* **Week 3 (03/21 to 03/27)**: Implement the 3D collision detection and
   resolution engine (momentum conservation), as well as the boundary shrinking
   logic.
 * **Week 4 (03/28 to 04/03)**: Python Binding & Integration Testing. Set up the
