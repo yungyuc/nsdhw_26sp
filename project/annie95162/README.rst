@@ -16,7 +16,9 @@ nearest neighbor search functionality.
 Problem to Solve
 ================
 
-In many machine learning systems, especially incremental learning and continual learning, models need to store representative feature vectors(prototypes) of previously learned classes.
+In many machine learning systems, especially incremental learning and
+continual learning, models need to store representative feature vectors
+(prototypes) of previously learned classes.
 
 These stored vectors are later used for tasks such as:
 
