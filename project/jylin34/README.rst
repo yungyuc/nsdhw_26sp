@@ -176,15 +176,15 @@ Engineering Infrastructure
 Schedule
 ========
 
-* **Week 1 (03/16 to 03/22)**:  Project Infrastructure. Implement the CMake 
-  build system and initial ``pybind11`` bindings. Define the C++ 
-  ``Population`` class and expose its memory to Python via Buffer Protocol.
+* **Week 1 (03/16 to 03/22)**: Implement the CMake build system and initial
+  ``pytest`` framework. Define a stable, fixed-size C++ ``Population`` 
+  buffer and expose it via Buffer Protocol. 
 * **Week 2 (03/23 to 03/29)**: Core C++ Operators. Develop the initial single-
   threaded kernels for crossover and mutation. Ensure these operators 
   interact correctly with the raw double-precision memory buffers.
-* **Week 3 (03/30 to 04/05)**:  Integration and Testing. Implement the 
-  **Batch Evaluation** bridge. Write ``pytest`` scripts to verify that 
-  user-defined Python functions can correctly process the C++ memory views.
+* **Week 3 (03/30 to 04/05)**: Integration and Batch Evaluation. Implement
+  the bridge for user-defined Python fitness functions. Verify that the
+  Python-side NumPy views can safely process the C++ memory buffers. 
 * **Week 4 (04/06 to 04/12)**: Evolutionary Loop. Implement the selection 
   logic and orchestrate the main GA cycle in C++. Verify end-to-end 
   functionality (Initialization -> Evaluation -> Reproduction) from Python.
