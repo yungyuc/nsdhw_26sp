@@ -173,6 +173,7 @@ Start presentation slide preparation and update according to weekly progress
 
 Week 2 (03/16):
 Definition for c++ table buffer operation functions
+Create test bench for c++ round trip functions
 
 Week 3 (03/23):
 Create indexing, slicing, getting, replace function in c++
