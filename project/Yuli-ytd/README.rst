@@ -9,56 +9,77 @@ numerical statistics.
 Basic Information
 =================
 
-GitHub Repository:
+GitHub Repository: https://github.com/Yuli-ytd/StreamStats
 
-Numerical analysis often involves continuous data streams.
-For example, high-frequency financial ticks, sensor telemetry, and other real-time signals.
-Unlike static datasets, streaming data must be processed immediately.
-Data points arrive sequentially and can be too voluminous to store entirely in memory.
+Numerical analysis often involves continuous data streams. For example, 
+high-frequency financial ticks, sensor telemetry, and other real-time 
+signals. Unlike static datasets, streaming data must be processed immediately. 
+Data points arrive sequentially and can be too voluminous to store entirely 
+in memory.
 
-Efficiently computing statistics over a "sliding window" (the most recent
-:math:`W` elements) is a key operation in these domains. This project, StreamStats,
+Efficiently computing statistics over a "sliding window" (the most recent 
+`W` elements) is a key operation in these domains. This project, StreamStats,
 offers a C++ infrastructure to handle these tasks with minimal overhead,
 while providing a seamless interface for Python-based data science workflows.
 
 Problem to Solve
 ================
 
-The primary challenge in streaming statistics is the trade-off between **computational latency** and **numerical stability** in high-frequency environments.
+The primary challenge in streaming statistics is the trade-off between 
+**computational latency** and **numerical stability** in high-frequency 
+environments.
 
-1. **Redundant Computation:** A naive implementation recomputes statistics from scratch each time the window advances. For a stream of length :math:`N` and a window size :math:`W`, this requires :math:`O(NW)` operations. As :math:`W` grows, latency becomes a bottleneck in real-time systems. StreamStats uses incremental algorithms to reduce total complexity to :math:`O(N)`.
+1. **Redundant Computation:** A naive implementation recomputes statistics 
+from scratch each time the window advances. For a stream of length `N` and 
+a window size `W`, this requires `O(NW)` operations. As `W` grows, latency 
+becomes a bottleneck in real-time systems. StreamStats uses incremental 
+algorithms to reduce total complexity to `O(N)`.
 
-2. **Memory Overhead and Jitter:** In Python-based pipelines, array slicing (e.g., ``data[-W:]``) can create memory copies. Frequent allocations may trigger garbage collection, causing unpredictable timing jitter. By using a C++ ``RingBuffer``, StreamStats keeps memory usage fixed and avoids expensive copying.
+2. **Memory Overhead and Jitter:** In Python-based pipelines, array slicing 
+(e.g., ``data[-W:]``) can create memory copies. Frequent allocations may 
+trigger garbage collection, causing unpredictable timing jitter. By using a 
+C++ ``RingBuffer``, StreamStats keeps memory usage fixed and avoids expensive 
+copying.
 
-3. **Numerical Instability:** Naive variance formulas are prone to catastrophic cancellation due to floating-point precision limits. StreamStats uses Welford’s algorithm to maintain robust and accurate results, even in long-running streams.
+3. **Numerical Instability:** Naive variance formulas are prone to 
+catastrophic cancellation due to floating-point precision limits. StreamStats 
+uses Welford’s algorithm to maintain robust and accurate results, even in 
+long-running streams.
 
-To address these issues, StreamStats implements incremental C++ algorithms that update statistics in :math:`O(1)` or :math:`O(log W)` time, while efficiently sharing memory buffers with Python to minimize unnecessary copying.
+To address these issues, StreamStats implements incremental C++ algorithms 
+that update statistics in `O(1)` or `O(log W)` time, while efficiently sharing 
+memory buffers with Python to minimize unnecessary copying.
 
 Prospective Users
 =================
 
-StreamStats is intended for students, researchers, and developers who need to compute
-basic streaming statistics with low latency while still working in Python.
+StreamStats is intended for students, researchers, and developers who need to 
+compute basic streaming statistics with low latency while still working in 
+Python.
 
 Potential users include:
 
-- **Quantitative Finance Learners and Practitioners:** Users working with market time-series
-  data who need rolling statistics (e.g., moving average or volatility) updated as new ticks arrive.
+- **Quantitative Finance Learners and Practitioners:** Users working with 
+  market time-series data who need rolling statistics (e.g., moving average 
+  or volatility) updated as new ticks arrive.
 
-- **IoT and Monitoring Developers:** Users building sensor-data pipelines that require
-  real-time statistical summaries for simple anomaly detection.
+- **IoT and Monitoring Developers:** Users building sensor-data pipelines that 
+  require real-time statistical summaries for simple anomaly detection.
 
-- **Signal Processing and Experimental Research Students:** Users handling continuous
-  measurement data (e.g., lab instruments) and applying window-based statistics for preprocessing.
+- **Signal Processing and Experimental Research Students:** Users handling 
+  continuous measurement data (e.g., lab instruments) and applying window-based 
+  statistics for preprocessing.
 
-Overall, StreamStats provides a C++ implementation for performance-critical updates and
-a Python interface for easier experimentation and integration into data workflows.
+Overall, StreamStats provides a C++ implementation for performance-critical 
+updates and a Python interface for easier experimentation and integration into 
+data workflows.
 
 System Architecture
 ===================
 
-StreamStats follows a two-layer architecture to balance performance and usability:
-a C++ core for streaming computation and a Python interface for user-facing workflows.
+StreamStats follows a two-layer architecture to balance performance and 
+usability: a C++ core for streaming computation and a Python interface 
+for user-facing workflows.
 
 1. C++ Core Layer
 -----------------
@@ -66,10 +87,13 @@ The core layer is implemented in C++11 and focuses on fixed-cost updates for
 streaming statistics.
 
 - **RingBuffer<T>** is the primary data container. It stores the most recent
-  :math:`W` samples in a fixed-size contiguous buffer, so memory usage remains bounded.
+  `W` samples in a fixed-size contiguous buffer, so memory usage remains 
+  bounded.
+
 - **Statistics modules** are updated incrementally when a new value arrives.
   The first target is rolling mean and variance (Welford-based update).
   Additional statistics (e.g., median) can be added as separate modules later.
+
 - This layer is designed to minimize repeated computation and avoid frequent
   memory allocation during streaming.
 
@@ -79,17 +103,18 @@ The Python layer is built with pybind11 and provides Python API bindings
 for data analysis workflows.
 
 - Python users can push new samples and query current statistics directly.
+
 - The initial implementation will expose concrete floating-point types
   (for example, ``float`` and ``double`` bindings).
 
 3. Data Flow and Scope
 ----------------------
-At each update step, a new sample is inserted into the ring buffer, expired data
-is logically removed, and enabled statistics are updated incrementally.
+At each update step, a new sample is inserted into the ring buffer, expired 
+data is logically removed, and enabled statistics are updated incrementally.
 
 The first version focuses on correctness, numerical stability, and predictable
-runtime behavior in a single-thread setting. Thread-safe updates and more advanced
-memory-sharing strategies are considered future extensions.
+runtime behavior in a single-thread setting. Thread-safe updates and more 
+advanced memory-sharing strategies are considered future extensions.
 
 API Description
 ===============
@@ -99,8 +124,8 @@ statistics on streaming scalar data.  The first version focuses on essential
 operations and keeps advanced features as future work.
 
 In C++, a class template ``ScalarStream<T>`` will be provided under namespace
-``streamstats``.  The constructor takes the window size, and the object supports
-incremental updates and basic statistic queries.
+``streamstats``.  The constructor takes the window size, and the object 
+supports incremental updates and basic statistic queries.
 
 Planned core methods in C++:
 
@@ -151,12 +176,14 @@ Week 7 (05/11 to 05/17):
 
 Week 8 (05/18 to 05/24):
 
- Buffer week for bug fixes, documentation cleanup, and final presentation preparation.
+ Buffer week for bug fixes, documentation cleanup, 
+ and final presentation preparation.
 
 Optional Extensions
 ====================
 
-If the core milestones are completed on time, the following topics may be explored:
+If the core milestones are completed on time, 
+the following topics may be explored:
 
 1. Rolling median support.
 2. Batch update API (e.g., ``push_batch()``).
