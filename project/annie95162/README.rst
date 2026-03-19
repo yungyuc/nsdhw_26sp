@@ -171,10 +171,13 @@ Engineering Infrastructure
 * **Testing Framework**: Testing is divided into two distinct levels:
 
   * **C++ Testing (GTest/Assertions)**:
+
     - Verify memory correctness and buffer stability.
     - Validate numerical correctness of distance computations.
     - Test edge cases such as empty input or dimension mismatch.
+
   * **Python Testing (pytest)**:
+
     - Validate NumPy input/output behavior and buffer protocol safety.
     - Ensure no memory corruption during data exchange.
     - Integration tests for high-level API workflows.
