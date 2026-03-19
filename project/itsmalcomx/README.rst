@@ -136,12 +136,14 @@ convention (``feat:``, ``fix:``, ``test:``, ``docs:``).
 Testing
 -------
 
-C++ unit tests use Google Test (gtest) and verify the RK4 and RK45
-kernels against problems with known analytical solutions:
-exponential decay (``dy/dt = -ky``), simple harmonic oscillator,
-and a two-body orbital problem. Python tests use pytest and validate
-FastODE output against ``scipy.integrate.solve_ivp`` to within
-``rtol=1e-5``. All tests must pass before any merge to ``main``.
+C++ unit tests use Google Test (gtest) to verify the correctness of
+the RK4 and RK45 solver kernels, including step computation and
+error estimation logic. Validation against known analytical
+solutions (exponential decay ``dy/dt = -ky``, simple harmonic
+oscillator, Lotka-Volterra) is performed in Python using pytest,
+which compares FastODE output against ``scipy.integrate.solve_ivp``
+to within ``rtol=1e-5``. All tests must pass before any merge to
+``main``.
 
 Continuous Integration
 ----------------------
