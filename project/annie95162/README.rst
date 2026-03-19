@@ -52,11 +52,13 @@ System Architecture
 
 The system follows a classic hybrid architecture:
 
-1. **C++ Core Library**: Manages contiguous memory allocation (using a custom 
-   array structure similar to a simplified ``std::vector`` or 2D buffer) 
-   and performs heavy numerical distance calculations.
-2. **Python Interface**: Built with ``pybind11`` to expose C++ structures 
-   to Python, allowing direct interaction with ``numpy.ndarray``.
+1. **C++ Core Library**: Manages contiguous memory using a custom buffer
+   abstraction instead of directly relying on ``std::vector``, ensuring
+   stable memory layout and safe interaction with Python.
+
+2. **Python Interface**: Built with ``pybind11`` to expose C++ structures.
+   The interface uses the buffer protocol to support efficient data exchange
+   with NumPy arrays while avoiding memory safety issues.
 
 **Work Flow**:
 Input vectors (NumPy) -> pybind11 (Pointer passing) -> C++ Vector Store -> 
@@ -166,23 +168,39 @@ Engineering Infrastructure
   command (e.g., ``pip install .`` or ``cmake && make``).
 * **Version Control**: Git on GitHub. Maintaining a clean commit history 
   following the "Conventional Commits" style.
-* **Testing Framework**: ``pytest`` for the Python API and ``GTest`` or 
-  simple C++ assertions for the core.
+* **Testing Framework**: Testing will be divided into two levels:
+* **C++ Testing**
+  - verify memory correctness
+  - validate distance computations
+  - test edge cases (empty input, dimension mismatch)
+* **Python Testing**
+  - validate NumPy input/output behavior
+  - ensure buffer safety and no memory corruption
+  - integration tests for API usage
+  Python tests will use ``pytest``.
+  C++ tests will use simple assertions or a lightweight framework.
 * **Documentation**: ``reStructuredText`` included in the repository.
 
 Schedule
 ========
 
-Planning phase (8 weeks):
+Planning phase (10 weeks):
 
-* **Week 1 (03/16)**: Finalize C++ data structure design and setup CMake with pybind11.
-* **Week 2 (03/23)**: Implement core ``VectorStore`` class and memory management.
-* **Week 3 (03/30)**: Implement optimized L2 distance computation kernels.
-* **Week 4 (04/06)**: Implement Cosine similarity and edge-case handling.
-* **Week 5 (04/13)**: Develop the k-Nearest Neighbor search algorithm.
-* **Week 6 (04/20)**: Finalize Python bindings and ensure NumPy compatibility.
-* **Week 7 (04/27)**: Performance profiling and optimization (OpenMP).
-* **Week 8 (05/04)**: Complete documentation and prepare for presentation.
+* **Week 1 (03/16)**: Finalize system design and define vector storage data 
+  structure.
+* **Week 2 (03/23)**: Implement basic memory layout and contiguous buffer 
+  management.
+* **Week 3 (03/30)**: Add unit tests for storage correctness and validate memory 
+  behavior.
+* **Week 4 (04/06)**: Implement L2 distance computation and corresponding tests.
+* **Week 5 (04/13)**: Implement cosine similarity and handle edge cases.
+* **Week 6 (04/20)**: Develop the k-Nearest Neighbor (brute-force) search algorithm.
+* **Week 7 (04/27)**: Integrate components and verify correctness of search results.
+* **Week 8 (05/04)**: Implement Python bindings using pybind11 and test NumPy 
+  compatibility.
+* **Week 9 (05/11)**: Perform performance profiling and basic optimization 
+  (e.g., OpenMP).
+* **Week 10 (05/18)**: Finalize documentation and prepare presentation.
 
 References
 ==========
