@@ -82,8 +82,8 @@ The C++ API
 The core functionality is implemented in C++. The main class
 ``VectorStore`` manages vector storage and similarity search.
 
-Vectors are stored in a contiguous memory layout using a single
-``std::vector<float>`` buffer.
+Vectors are stored in a contiguous memory layout using a custom buffer
+abstraction.
 
 .. code-block:: cpp
 
@@ -116,8 +116,8 @@ Vectors are stored in a contiguous memory layout using a single
 
         size_t m_dim;
 
-        // contiguous storage: size = num_vectors * m_dim
-        std::vector<float> m_storage;
+        // contiguous storage managed by a custom buffer abstraction
+        Buffer m_storage;
     };
 
 Main API functionalities include:
