@@ -53,6 +53,10 @@ Follow the format to add your project:
    `Project subject (this is an example entry) <github_account_name/README.rst>`__:
    https://github.com/github_account_name/project_name
 
+1. `ChaseWu1125 <https://github.com/ChaseWu1125>`__ for
+   `FastMCPricer <ChaseWu1125/README.rst>`__:
+   https://github.com/ChaseWu1125/FastMCPricer
+
 .. note::
 
   Append your project after the first example entry.  Do not delete the example
