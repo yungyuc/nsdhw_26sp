@@ -55,7 +55,7 @@ Follow the format to add your project:
 
 1. `LingTim <https://github.com/LingTim>`__ for
    `Emulating NumPy Matrix Operations <LingTim/README.rst>`__:
-   https://github.com/LingTim/Emulating-NumPy-Matrix-Operations
+   https://github.com/LingTim/Reimplement-NumPy-Matrix-Operations
 
 .. note::
 
