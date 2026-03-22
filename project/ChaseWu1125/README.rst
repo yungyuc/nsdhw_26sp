@@ -101,6 +101,10 @@ main layers:
    speed and memory efficiency. It is divided into several independent 
    modules:
    
+   * **Data Structure:** 2D asset paths and random number matrices will 
+     be stored in a flattened 1D ``std::vector<double>``. This contiguous 
+     memory layout maximizes cache locality and avoids the overhead of 
+     nested vectors.
    * **Option Module:** An object-oriented hierarchy defining the 
      financial instruments. A base ``Option`` class will be extended 
      by ``EuropeanOption``, ``AsianOption``, and ``BarrierOption``.
