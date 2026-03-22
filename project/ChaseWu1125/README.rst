@@ -192,30 +192,30 @@ Schedule
 The project development is planned over an 8-week timeline 
 (from 03/16 to 05/10):
 
-* **Week 1 (03/16): Environment & Baseline:** Set up the CMake build 
+* **Week 1 (03/23): Environment & Baseline:** Set up the CMake build 
   system, pybind11 integration, and implement the Black-Scholes 
   analytical solution as a testing baseline.
-* **Week 2 (03/23): Core Math & Single-thread MC:** Implement the 
+* **Week 2 (03/30): Core Math & Single-thread MC:** Implement the 
   Geometric Brownian Motion (GBM) logic and a single-threaded 
   Monte Carlo pricer for standard European options. Validate 
   correctness against the baseline.
-* **Week 3 (03/30): RNG & Thread Safety:** Implement robust, 
+* **Week 3 (04/06): RNG & Thread Safety:** Implement robust, 
   thread-safe random number generators (e.g., independent 
   ``std::mt19937`` states) in C++ to prepare for parallelization.
-* **Week 4 (04/06): Parallelization:** Integrate OpenMP/``std::thread`` 
+* **Week 4 (04/13): Parallelization:** Integrate OpenMP/``std::thread`` 
   to parallelize the path generation and payoff calculation. 
   Conduct preliminary speedup benchmarking.
-* **Week 5 (04/13): Exotic Options:** Extend the base option 
+* **Week 5 (04/20): Exotic Options:** Extend the base option 
   classes to include path-dependent derivatives, such as Asian and 
   Barrier options, utilizing the parallelized engine.
-* **Week 6 (04/20): Python Integration & Visualization:** Refine 
+* **Week 6 (04/27): Python Integration & Visualization:** Refine 
   the Python API and write scripts using ``matplotlib`` to 
   visualize pricing convergence and multi-threading performance 
   scaling.
-* **Week 7 (04/27): Profiling & Optimization:** Profile the C++ 
+* **Week 7 (05/04): Profiling & Optimization:** Profile the C++ 
   code for memory leaks or race conditions. Optimize the reduction 
   process in the parallel loops.
-* **Week 8 (05/04): Documentation & Wrap-up:** Finalize the Sphinx 
+* **Week 8 (05/11): Documentation & Wrap-up:** Finalize the Sphinx
   documentation, clean up the codebase, and prepare the 
   presentation slides.
 
