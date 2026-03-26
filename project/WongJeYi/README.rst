@@ -168,26 +168,33 @@ Schedule
 ========
 
 Week 1 (03/09):
+Definition for c++ ColTable data structure
 Start presentation slide preparation and update according to weekly progress
 
 Week 2 (03/16):
-Definition for c++ table structure
-Definition for c++ table operation functions
+Definition for c++ table buffer operation functions
+Create test bench for c++ round trip functions
 
 Week 3 (03/23):
-Python wrapper classes constructor
+Create indexing, slicing, getting, replace function in c++
 
 Week 4 (03/30):
-Troubleshooting week or completing delayed progress
+command testbench for python call
+Python wrapper classes constructor
 
 Week 5 (04/06):
-Create command testbench for python call
-
-Week 6 (04/13):
 Troubleshooting week or completing delayed progress
 
+Week 6 (04/13):
+Optimization for memory and adding more complicated data types like Dictionary if possible
+
 Week 7 (04/20):
-Optimization for memory
+Adding option for adaptive row or Columnary array function if possible
+.. 
+   State 1: Initial: Store array in row array.
+   State 2: Tracking: Once an array exceeds a size threshold (e.g 50,000 elements), the system begins counting read accesses.
+   State 3: Transformation: If read counts exceed a second threshold (default 25,000), the system triggers the actual memory layout transformation.
+   State 4: Restoration: If an unsupported operation occurs (e.g., adding an incompatible object shape or modifying a property), the array is automatically reverted to its original row-oriented format.
 
 Week 8 (04/27):
 Completing the final pieces/ refactoring
@@ -195,7 +202,7 @@ Completing the final pieces/ refactoring
 References
 ==========
 
-	https://arrow.apache.org/docs/format/CDataInterface.html
-
+• https://arrow.apache.org/docs/format/CDataInterface.html
+• https://dl.acm.org/doi/10.1145/3546918.3546919
 
 Project ColTable list by WongJeYi
