@@ -45,16 +45,18 @@ Presentation
 
 Projects by Account Names
 +++++++++++++++++++++++++
-Project can be found here
-`WongJeYi <https://github.com/WongJeYi>`__ for
-   `ColTable <WongJeYi/ColTable/README.rst>`__:
-   https://github.com/WongJeYi/ColTable
+
 
 Follow the format to add your project:
 
 0. `github_account_name <https://github.com/github_account_name>`__ for
    `Project subject (this is an example entry) <github_account_name/README.rst>`__:
    https://github.com/github_account_name/project_name
+
+Project can be found here
+`WongJeYi <https://github.com/WongJeYi>`__ for
+   `ColTable <WongJeYi/ColTable/README.rst>`__:
+   https://github.com/WongJeYi/ColTable
 
 .. note::
 
