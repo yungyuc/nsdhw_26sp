@@ -84,6 +84,11 @@ Follow the format to add your project:
    `Emulating NumPy Matrix Operations <LingTim/README.rst>`__:
    https://github.com/LingTim/Reimplement-NumPy-Tensor-Operations
 
+Project can be found here
+`WongJeYi <https://github.com/WongJeYi>`__ for
+   `ColTable <WongJeYi/ColTable/README.rst>`__:
+   https://github.com/WongJeYi/ColTable
+
 .. note::
 
   Append your project after the first example entry.  Do not delete the example
