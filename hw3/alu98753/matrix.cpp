@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
-
+#include <mkl_cblas.h>
 namespace py = pybind11;
 
 class Matrix {
@@ -31,7 +31,7 @@ class Matrix {
         size_t ncol() const { return m_ncol; }
         double& operator()(size_t i, size_t j) { return m_buffer[i * m_ncol + j]; }
         double operator()(size_t i, size_t j) const { return m_buffer[i * m_ncol + j]; }
-
+        double* get_buffer() const { return m_buffer; }
         // compare
         /*        // === 比較 ===
         operator==(other) -> bool:
@@ -104,6 +104,21 @@ Matrix multiply_naive(Matrix const &mat1, Matrix const &mat2){
     return C;
 }
 
+Matrix multiply_mkl(Matrix const &mat1, Matrix const &mat2){
+    Matrix ret(mat1.nrow(), mat2.ncol());
+    if(mat1.ncol() != mat2.nrow()){
+        throw std::runtime_error("Incompatible matrix dimensions");
+    }
+    cblas_dgemm(
+        CblasRowMajor, CblasNoTrans, CblasNoTrans, 
+        mat1.nrow(), mat2.ncol(), mat1.ncol(), 1.0, 
+        mat1.get_buffer(), mat1.ncol(), 
+        mat2.get_buffer(), mat2.ncol(), 
+        0.0, ret.get_buffer(), ret.ncol()
+    );
+    return ret;
+}
+
 PYBIND11_MODULE(_matrix, m){
     m.doc() = "Matrix class for homework 3";
     py::class_<Matrix>(m, "Matrix")
@@ -118,5 +133,6 @@ PYBIND11_MODULE(_matrix, m){
         })
         .def("__eq__", &Matrix::operator==);
     m.def("multiply_naive", &multiply_naive);
+    m.def("multiply_mkl", &multiply_mkl);
     // m.def("multiply_tile", &multiply_tile);
 }

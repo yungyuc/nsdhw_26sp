@@ -55,3 +55,47 @@ def test_multiply_naive(mat1, mat2):
     assert result[2,0] == 95
     assert result[2,1] == 106
     assert result[2,2] == 117
+
+
+# test multiply_mkl
+def test_multiply_mkl(mat1, mat2):
+    mat1[0,0] = 1
+    mat1[0,1] = 2
+    mat1[1,0] = 3
+    mat1[1,1] = 4
+    mat1[2,0] = 5
+    mat1[2,1] = 6
+    mat2[0,0] = 7
+    mat2[0,1] = 8
+    mat2[0,2] = 9
+    mat2[1,0] = 10
+    mat2[1,1] = 11
+    mat2[1,2] = 12
+    result = _matrix.multiply_mkl(mat1, mat2)
+    assert result[0,0] == 27
+    assert result[0,1] == 30
+    assert result[0,2] == 33
+    assert result[1,0] == 61
+    assert result[1,1] == 68
+    assert result[1,2] == 75
+    assert result[2,0] == 95
+    assert result[2,1] == 106
+    assert result[2,2] == 117
+
+# test mkl == naive
+def test_mkl_equals_naive(mat1, mat2):
+    mat1[0,0] = 1
+    mat1[0,1] = 2
+    mat1[1,0] = 3
+    mat1[1,1] = 4
+    mat1[2,0] = 5
+    mat1[2,1] = 6
+    mat2[0,0] = 7
+    mat2[0,1] = 8
+    mat2[0,2] = 9
+    mat2[1,0] = 10
+    mat2[1,1] = 11
+    mat2[1,2] = 12
+    result_mkl = _matrix.multiply_mkl(mat1, mat2)
+    result_naive = _matrix.multiply_naive(mat1, mat2)
+    assert result_mkl == result_naive
