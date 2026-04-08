@@ -1,10 +1,11 @@
 CXX = g++
 CXXFLAGS = -O3 -Wall -std=c++11 -fPIC
-LDFLAGS = -lopenblas
+LDFLAGS = -lmkl_rt
 
 PYTHON_INCLUDES := $(shell python3-config --includes)
 PYBIND11_INCLUDES := $(shell python3 -m pybind11 --includes 2>/dev/null)
-INCLUDES := $(PYTHON_INCLUDES) $(PYBIND11_INCLUDES)
+MKL_INCLUDES := -I/usr/include/mkl
+INCLUDES := $(PYTHON_INCLUDES) $(PYBIND11_INCLUDES) $(MKL_INCLUDES)
 
 .PHONY = all test clean
 

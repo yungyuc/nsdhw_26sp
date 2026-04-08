@@ -2,7 +2,7 @@
 #include <pybind11/pybind11.h>
 #include <stdexcept>
 #include <algorithm>
-#include <cblas.h>
+#include <mkl.h>
 #include "Matrix.hpp"
 
 Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2){
