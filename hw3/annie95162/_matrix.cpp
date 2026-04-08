@@ -153,8 +153,6 @@ Matrix multiply_mkl(Matrix const & lhs, Matrix const & rhs) {
         static_cast<int>(rhs.ncol())
     );
 #else
-    // 若編譯環境真的沒有 cblas，退回 naive，至少功能正確。
-    // 不過正式評分最好還是有 BLAS/MKL。
     ret = multiply_naive(lhs, rhs);
 #endif
 
