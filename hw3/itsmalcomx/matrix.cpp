@@ -59,25 +59,8 @@ Matrix multiply_naive(const Matrix &A, const Matrix &B) {
 }
 
 
-static void axpy_avx2(double * __restrict__ c,
-                      const double * __restrict__ b,
-                      double alpha, size_t n) {
-    const __m256d va = _mm256_set1_pd(alpha);
-    size_t j = 0;
-    for (; j + 16 <= n; j += 16) {
-        _mm256_storeu_pd(c+j,    _mm256_fmadd_pd(va, _mm256_loadu_pd(b+j),    _mm256_loadu_pd(c+j)));
-        _mm256_storeu_pd(c+j+4,  _mm256_fmadd_pd(va, _mm256_loadu_pd(b+j+4),  _mm256_loadu_pd(c+j+4)));
-        _mm256_storeu_pd(c+j+8,  _mm256_fmadd_pd(va, _mm256_loadu_pd(b+j+8),  _mm256_loadu_pd(c+j+8)));
-        _mm256_storeu_pd(c+j+12, _mm256_fmadd_pd(va, _mm256_loadu_pd(b+j+12), _mm256_loadu_pd(c+j+12)));
-    }
-    for (; j + 4 <= n; j += 4)
-        _mm256_storeu_pd(c+j, _mm256_fmadd_pd(va, _mm256_loadu_pd(b+j), _mm256_loadu_pd(c+j)));
-    for (; j < n; ++j)
-        c[j] += alpha * b[j];
-}
-
-
-static constexpr size_t JBLOCK = 256;
+static constexpr size_t KC = 128;
+static constexpr size_t NC = 500;  
 
 Matrix multiply_tile(const Matrix &A, const Matrix &B, size_t tsize) {
     if (A.ncol() != B.nrow())
@@ -90,33 +73,74 @@ Matrix multiply_tile(const Matrix &A, const Matrix &B, size_t tsize) {
     const double *a = A.data(), *b = B.data();
     double       *c = C.data();
 
-   
-    std::vector<double> bpack(tsize * JBLOCK);
+  
+    const size_t MC = std::max(tsize, size_t(64));
 
-    for (size_t J = 0; J < N; J += JBLOCK) {
-        const size_t JMax = std::min(J + JBLOCK, N);
-        const size_t JBlk = JMax - J;
+  
+    std::vector<double> bpack(KC * NC);
+    
+    std::vector<double> apack(MC * KC);
 
-        for (size_t k0 = 0; k0 < K; k0 += tsize) {
-            const size_t kMax = std::min(k0 + tsize, K);
-            const size_t kBlk = kMax - k0;
+    for (size_t k0 = 0; k0 < K; k0 += KC) {
+        const size_t kEnd = std::min(k0 + KC, K);
+        const size_t kLen = kEnd - k0;
 
-          
-            for (size_t ki = 0; ki < kBlk; ++ki)
-                std::memcpy(bpack.data() + ki * JBlk,
-                            b + (k0 + ki) * N + J,
-                            JBlk * sizeof(double));
+        for (size_t j0 = 0; j0 < N; j0 += NC) {
+            const size_t jEnd = std::min(j0 + NC, N);
+            const size_t jLen = jEnd - j0;
 
-          
-            for (size_t i0 = 0; i0 < M; i0 += tsize) {
-                const size_t iMax = std::min(i0 + tsize, M);
-                const double *bp  = bpack.data();
+            
+            for (size_t ki = 0; ki < kLen; ++ki)
+                std::memcpy(bpack.data() + ki * jLen,
+                            b + (k0 + ki) * N + j0,
+                            jLen * sizeof(double));
 
-                for (size_t i = i0; i < iMax; ++i) {
-                    const double *ai = a + i * K + k0;
-                    double       *ci = c + i * N + J;
-                    for (size_t ki = 0; ki < kBlk; ++ki)
-                        axpy_avx2(ci, bp + ki * JBlk, ai[ki], JBlk);
+            for (size_t i0 = 0; i0 < M; i0 += MC) {
+                const size_t iEnd = std::min(i0 + MC, M);
+                const size_t iLen = iEnd - i0;
+
+             
+                for (size_t ii = 0; ii < iLen; ++ii)
+                    std::memcpy(apack.data() + ii * kLen,
+                                a + (i0 + ii) * K + k0,
+                                kLen * sizeof(double));
+
+               
+                for (size_t ii = 0; ii < iLen; ++ii) {
+                    const double *ai = apack.data() + ii * kLen;
+                    double       *ci = c + (i0 + ii) * N + j0;
+                    const double *bp = bpack.data();
+
+                    size_t ki = 0;
+                    
+                    for (; ki + 4 <= kLen; ki += 4) {
+                        const __m256d va0 = _mm256_set1_pd(ai[ki+0]);
+                        const __m256d va1 = _mm256_set1_pd(ai[ki+1]);
+                        const __m256d va2 = _mm256_set1_pd(ai[ki+2]);
+                        const __m256d va3 = _mm256_set1_pd(ai[ki+3]);
+                        const double *b0 = bp + (ki+0)*jLen;
+                        const double *b1 = bp + (ki+1)*jLen;
+                        const double *b2 = bp + (ki+2)*jLen;
+                        const double *b3 = bp + (ki+3)*jLen;
+                        size_t j = 0;
+                        for (; j + 4 <= jLen; j += 4) {
+                            __m256d vc = _mm256_loadu_pd(ci+j);
+                            vc = _mm256_fmadd_pd(va0, _mm256_loadu_pd(b0+j), vc);
+                            vc = _mm256_fmadd_pd(va1, _mm256_loadu_pd(b1+j), vc);
+                            vc = _mm256_fmadd_pd(va2, _mm256_loadu_pd(b2+j), vc);
+                            vc = _mm256_fmadd_pd(va3, _mm256_loadu_pd(b3+j), vc);
+                            _mm256_storeu_pd(ci+j, vc);
+                        }
+                        for (; j < jLen; ++j)
+                            ci[j] += ai[ki+0]*b0[j] + ai[ki+1]*b1[j]
+                                   + ai[ki+2]*b2[j] + ai[ki+3]*b3[j];
+                    }
+                    for (; ki < kLen; ++ki) {
+                        const double aik = ai[ki];
+                        const double *bk = bp + ki*jLen;
+                        for (size_t j = 0; j < jLen; ++j)
+                            ci[j] += aik * bk[j];
+                    }
                 }
             }
         }
@@ -139,8 +163,6 @@ Matrix multiply_mkl(const Matrix &A, const Matrix &B) {
                 0.0, C.data(), N);
     return C;
 }
-
-// pybind11 here
 
 PYBIND11_MODULE(_matrix, m) {
     m.doc() = "Matrix multiplication: naive, tiled, BLAS DGEMM";
