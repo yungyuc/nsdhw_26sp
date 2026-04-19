@@ -29,19 +29,85 @@ entry too.  You can request my review in the PR.
 Presentation
 ============
 
-..
-  The presentation schedule is set.  If you want to change the time, ask the
-  presenter at the other time slot, and file a PR tagging him or her and the
-  instructor (@yungyuc) against the branch `master`.  Everyone involved needs to
-  leave a global comment to agree the exchange in the PR.  The PR subject line
-  should start with ``[presentation]``.
+The presentation schedule is set.  If you want to change the time, ask the
+presenter at the time slot, and file a PR tagging him or her and the instructor
+(@yungyuc) against the branch `master`.  Everyone involved needs to leave a
+global comment to agree the exchange in the PR.  The PR subject line should
+start with ``[presentation]``.
 
-  Each presenter has at most 15 minutes including setup.  A common arrangement is
-  to present for 12 minutes and use 2 minutes for questions and discussions.
+Each presenter has at most 15 minutes including setup.  A common arrangement is
+to present for 12 minutes and use 2 minutes for questions and discussions.
 
-  Presenters should prepare the computer.  It is OK to share.  If a presenter needs
-  help to prepare a computer, they need to bring it up and get it resolved one week
-  (168 hours) before the presentation.
+Presenters should prepare the computer.  It is OK to share.  If a presenter needs
+help to prepare a computer, they need to bring it up and get it resolved one week
+(168 hours) before the presentation.
+
+Test your setup in the classroom before the presentation day.
+
+Time Table
+++++++++++
+
+.. note::
+
+  The meeting room for the presentation is still EC114.
+
+.. list-table:: 8th June, 2026 (Monday) 7:00-9:50 (EC114)
+  :header-rows: 1
+
+  * - ID
+    - Time
+    - Presenter
+    - Project
+  * - 1
+    - 07:00 - 07:15
+    - `WongJeYi <https://github.com/WongJeYi>`__
+    - `ColTable <WongJeYi/README.rst>`__:
+      https://github.com/WongJeYi/ColTable
+  * - 2
+    - 07:15 - 07:30
+    - `Yuli-ytd <https://github.com/Yuli-ytd>`__
+    - `StreamStats <Yuli-ytd/README.rst>`__:
+      https://github.com/Yuli-ytd/StreamStats
+  * - 3
+    - 07:30 - 07:45
+    - `romanycc <https://github.com/romanycc>`__
+    - `DotArena <romanycc/README.rst>`__:
+      https://github.com/romanycc/DotArena
+  * - 4
+    - 07:45 - 08:00
+    - `itsmalcomx <https://github.com/itsmalcomx>`__
+    - `FastODE <itsmalcomx/README.rst>`__:
+      https://github.com/itsmalcomx/FastODE
+  * - 5
+    - 08:00 - 08:15
+    - `ChaseWu1125 <https://github.com/ChaseWu1125>`__
+    - `FastMCPricer <ChaseWu1125/README.rst>`__:
+      https://github.com/ChaseWu1125/FastMCPricer
+  * - 6
+    - 08:15 - 08:30
+    - `jylin34 <https://github.com/jylin34>`__
+    - `FastGA <jylin34/README.rst>`__:
+      https://github.com/jylin34/FastGA
+  * - 7
+    - 08:30 - 08:45
+    - `LingTim <https://github.com/LingTim>`__
+    - `Emulating NumPy Matrix Operations <LingTim/README.rst>`__:
+      https://github.com/LingTim/Reimplement-NumPy-Tensor-Operations
+  * - 8
+    - 08:45 - 09:00
+    - `alu98753 <https://github.com/alu98753>`__
+    - `FastReplay: A Zero-Copy Atomic-Based Ring Buffer for RL <alu98753/README.rst>`__:
+      https://github.com/alu98753/FastReplay
+  * - 9
+    - 09:00 - 09:15
+    - `annie95162 <https://github.com/annie95162>`__
+    - `ProtoLib: Incremental Vector Store Library <annie95162/README.rst>`__:
+      https://github.com/annie95162/ProtoLib
+  * - 10
+    - 09:15 - 09:30
+    - `qqsc12 <https://github.com/qqsc12>`__
+    - `Semi-columnar-array for Semiconductor Data <qqsc12/README.rst>`__:
+      https://github.com/qqsc12/semi-columnar-array
 
 Projects by Account Names
 +++++++++++++++++++++++++
