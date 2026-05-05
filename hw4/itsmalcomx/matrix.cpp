@@ -230,13 +230,24 @@ PYBIND11_MODULE(_matrix, m) {
         .def("__eq__", &Matrix::operator==)
         ;
 
-    m.def("multiply_naive", &multiply_naive, py::arg("A"), py::arg("B"));
-    m.def("multiply_tile",  &multiply_tile,  py::arg("A"), py::arg("B"), py::arg("tsize"));
-    m.def("multiply_mkl",   &multiply_mkl,   py::arg("A"), py::arg("B"));
+    m.def("multiply_naive", &multiply_naive, py::arg("A"), py::arg("B"),
+          py::return_value_policy::move);
+    m.def("multiply_tile",  &multiply_tile,  py::arg("A"), py::arg("B"), py::arg("tsize"),
+          py::return_value_policy::move);
+    m.def("multiply_mkl",   &multiply_mkl,   py::arg("A"), py::arg("B"),
+          py::return_value_policy::move);
 
     m.def("bytes",       []{ return g_tracker.current;       });
-m.def("allocated",   []{ return g_tracker.total_alloc;   });
-m.def("deallocated", []{ return g_tracker.total_dealloc; });
+    m.def("allocated",   []{ return g_tracker.total_alloc;   });
+    m.def("deallocated", []{ return g_tracker.total_dealloc; });
+
+//     m.def("multiply_naive", &multiply_naive, py::arg("A"), py::arg("B"));
+//     m.def("multiply_tile",  &multiply_tile,  py::arg("A"), py::arg("B"), py::arg("tsize"));
+//     m.def("multiply_mkl",   &multiply_mkl,   py::arg("A"), py::arg("B"));
+
+//     m.def("bytes",       []{ return g_tracker.current;       });
+// m.def("allocated",   []{ return g_tracker.total_alloc;   });
+// m.def("deallocated", []{ return g_tracker.total_dealloc; });
 }
 
 
